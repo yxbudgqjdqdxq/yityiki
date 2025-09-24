@@ -4,46 +4,36 @@ import React, { useState, useRef, useEffect } from 'react';
 const BackgroundMusic = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.3); // Start with a softer volume
-  const [hasInteracted, setHasInteracted] = useState(false);
   const audioRef = useRef(null);
 
-  // Effect to play music only after the first user interaction
-  useEffect(() => {
-    const handleFirstInteraction = () => {
-      setHasInteracted(true);
-      setIsPlaying(true);
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-    };
-
-    window.addEventListener('click', handleFirstInteraction);
-    window.addEventListener('keydown', handleFirstInteraction);
-
-    return () => {
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-    };
-  }, []);
-
-  // Effect to control audio playback and volume
+  // Effect to control audio playback based on isPlaying state
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
-      if (isPlaying && hasInteracted) {
-        audioRef.current.play().catch(error => console.log("Audio play prevented: ", error));
+      if (isPlaying) {
+        // This is a user-initiated action, so play() will work.
+        audioRef.current.play().catch(error => {
+          // If play fails for any reason, log it and reset the state.
+          console.error("Audio play was prevented:", error);
+          setIsPlaying(false);
+        });
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, volume, hasInteracted]);
+  }, [isPlaying, volume]);
 
+  // The function to be called when the user clicks the button
+  const togglePlayPause = () => {
+    setIsPlaying(prevIsPlaying => !prevIsPlaying);
+  };
 
   return (
     <>
       <audio ref={audioRef} src="/bg-music.mp3" loop />
       <div className="music-player">
         <button 
-          onClick={() => setIsPlaying(!isPlaying)}
+          onClick={togglePlayPause}
           aria-label={isPlaying ? 'Pause Music' : 'Play Music'}
           className="play-button"
         >
@@ -68,4 +58,3 @@ const BackgroundMusic = () => {
 };
 
 export default BackgroundMusic;
-
