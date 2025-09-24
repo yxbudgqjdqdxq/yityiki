@@ -1,6 +1,6 @@
-import '@/styles/globals.css'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import BackgroundMusic from '@/components/BackgroundMusic'
+import '@/styles/globals.css'
 
 export default function App({ Component, pageProps }) {
   return (
