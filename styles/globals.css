@@ -247,4 +247,58 @@ body::after{
 /* If any top-level wrapper in your site uses z-index less than 0, bringing it above the background is required.
    This helper ensures page content stays above; add to your main wrapper only if needed:
    .site-root { position: relative; z-index: 1; }
+  /* ============ ANIMATED BACKGROUND ============ */
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* behind all content */
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(-45deg, #f7f0ff, #ffe6f7, #e6faff, #fff5e6);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.7;
+}
+
+.blob1 {
+  width: 400px; height: 400px;
+  top: 10%; left: 15%;
+  background: rgba(255,182,193,0.5);
+  animation: move1 25s infinite alternate;
+}
+.blob2 {
+  width: 300px; height: 300px;
+  bottom: 15%; right: 20%;
+  background: rgba(214,179,255,0.5);
+  animation: move2 28s infinite alternate;
+}
+.blob3 {
+  width: 350px; height: 350px;
+  top: 50%; left: 60%;
+  background: rgba(255,223,244,0.5);
+  animation: move3 30s infinite alternate;
+}
+.blob4 {
+  width: 300px; height: 300px;
+  top: 30%; right: 10%;
+  background: rgba(255,200,220,0.4);
+  animation: move4 32s infinite alternate;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes move1 { 0%{transform:translate(0,0)} 100%{transform:translate(50px,-50px)} }
+@keyframes move2 { 0%{transform:translate(0,0)} 100%{transform:translate(-40px,30px)} }
+@keyframes move3 { 0%{transform:translate(0,0)} 100%{transform:translate(60px,20px)} }
+@keyframes move4 { 0%{transform:translate(0,0)} 100%{transform:translate(-50px,-40px)} }
 */
