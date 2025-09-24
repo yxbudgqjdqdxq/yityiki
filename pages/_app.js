@@ -7,9 +7,7 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <AnimatedBackground />
-      <main className="page-transition">
-        <Component {...pageProps} />
-      </main>
+      <Component {...pageProps} />
       <BackgroundMusic />
     </>
   );
