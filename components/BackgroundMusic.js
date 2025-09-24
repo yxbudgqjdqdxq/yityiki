@@ -1,80 +1,71 @@
-"use client";
-import { useRef, useState, useEffect } from "react";
+// components/BackgroundMusic.js
+import React, { useState, useRef, useEffect } from 'react';
 
-export default function BackgroundMusic() {
+const BackgroundMusic = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.3); // Start with a softer volume
+  const [hasInteracted, setHasInteracted] = useState(false);
   const audioRef = useRef(null);
-  const [volume, setVolume] = useState(0.5);
-  const [playing, setPlaying] = useState(false);
 
-  // Fallback: start music when user clicks anywhere
+  // Effect to play music only after the first user interaction
   useEffect(() => {
-    const handleUserInteraction = () => {
-      if (!playing && audioRef.current) {
-        audioRef.current.volume = volume;
-        audioRef.current.play().catch(() => {});
-        setPlaying(true);
-      }
-      window.removeEventListener("click", handleUserInteraction);
+    const handleFirstInteraction = () => {
+      setHasInteracted(true);
+      setIsPlaying(true);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
     };
-    window.addEventListener("click", handleUserInteraction);
-    return () => window.removeEventListener("click", handleUserInteraction);
-  }, [playing, volume]);
 
-  const handleVolumeChange = (e) => {
-    const vol = parseFloat(e.target.value);
-    setVolume(vol);
-    if (audioRef.current) audioRef.current.volume = vol;
-  };
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, []);
+
+  // Effect to control audio playback and volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+      if (isPlaying && hasInteracted) {
+        audioRef.current.play().catch(error => console.log("Audio play prevented: ", error));
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying, volume, hasInteracted]);
+
 
   return (
     <>
       <audio ref={audioRef} src="/bg-music.mp3" loop />
-
-      {/* Slider is always rendered above everything */}
-      {playing && (
+      <div className="music-player">
+        <button 
+          onClick={() => setIsPlaying(!isPlaying)}
+          aria-label={isPlaying ? 'Pause Music' : 'Play Music'}
+          className="play-button"
+        >
+          {isPlaying ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          )}
+        </button>
         <input
           type="range"
           min="0"
           max="1"
           step="0.01"
           value={volume}
-          onChange={handleVolumeChange}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            width: "120px",
-            zIndex: 9999,
-          }}
+          onChange={(e) => setVolume(parseFloat(e.target.value))}
+          className="volume-slider"
         />
-      )}
-
-      {/* Play button for first interaction */}
-      {!playing && (
-        <button
-          onClick={() => {
-            if (audioRef.current) {
-              audioRef.current.volume = volume;
-              audioRef.current.play().catch(() => {});
-              setPlaying(true);
-            }
-          }}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            padding: "10px 14px",
-            borderRadius: "12px",
-            background: "#ffb6c1",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            zIndex: 9999,
-          }}
-        >
-          Play Music
-        </button>
-      )}
+      </div>
     </>
   );
-}
+};
+
+export default BackgroundMusic;
+
