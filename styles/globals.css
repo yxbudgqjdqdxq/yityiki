@@ -337,3 +337,38 @@ body::after{
 @keyframes move2 { 0% { transform: translate(0,0) } 100% { transform: translate(-60px,40px) } }
 @keyframes move3 { 0% { transform: translate(0,0) } 100% { transform: translate(50px,-60px) } }
 @keyframes move4 { 0% { transform: translate(0,0) } 100% { transform: translate(-70px,-30px) } }
+/* ========== ANIMATED BACKGROUND ========== */
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -999;
+  pointer-events: none;
+  overflow: hidden;
+  background: linear-gradient(-45deg, #f7f0ff, #ffe6f7, #e6faff, #fff5e6);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.blob1 { width: 400px; height: 400px; top: 5%; left: 10%; background: rgba(255,182,193,0.6); animation: move1 35s infinite alternate; }
+.blob2 { width: 350px; height: 350px; top: 30%; right: 5%; background: rgba(214,179,255,0.6); animation: move2 38s infinite alternate; }
+.blob3 { width: 300px; height: 300px; bottom: 10%; left: 15%; background: rgba(255,223,244,0.5); animation: move3 40s infinite alternate; }
+.blob4 { width: 450px; height: 450px; bottom: 20%; right: 20%; background: rgba(255,200,220,0.5); animation: move4 42s infinite alternate; }
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes move1 { 0% { transform: translate(0,0) } 100% { transform: translate(80px,-50px) } }
+@keyframes move2 { 0% { transform: translate(0,0) } 100% { transform: translate(-60px,40px) } }
+@keyframes move3 { 0% { transform: translate(0,0) } 100% { transform: translate(50px,-60px) } }
+@keyframes move4 { 0% { transform: translate(0,0) } 100% { transform: translate(-70px,-30px) } }
