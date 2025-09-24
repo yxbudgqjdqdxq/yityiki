@@ -1,13 +1,16 @@
-import AnimatedBackground from '@/components/AnimatedBackground'
-import BackgroundMusic from '@/components/BackgroundMusic'
-import '@/styles/globals.css'
+// pages/_app.js
+import '@/styles/globals.css';
+import AnimatedBackground from '../components/AnimatedBackground';
+import BackgroundMusic from '../components/BackgroundMusic';
 
 export default function App({ Component, pageProps }) {
   return (
     <>
       <AnimatedBackground />
+      <main className="page-transition">
+        <Component {...pageProps} />
+      </main>
       <BackgroundMusic />
-      <Component {...pageProps} />
     </>
-  )
+  );
 }
