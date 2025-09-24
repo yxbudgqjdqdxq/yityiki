@@ -1,17 +1,16 @@
-"use client"; // for Next.js 13 app dir, optional in pages dir
-import { useEffect, useRef, useState } from "react";
+"use client"; // Needed if using Next.js 13 app directory
+import { useRef, useState } from "react";
 
 export default function BackgroundMusic() {
   const audioRef = useRef(null);
   const [volume, setVolume] = useState(0.5);
   const [playing, setPlaying] = useState(false);
 
-  // Play audio after user interaction
   const handlePlay = () => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
       audioRef.current.play().catch(() => {
-        console.log("Autoplay blocked, click the button to start music");
+        console.log("Autoplay blocked. Click the button to start music.");
       });
       setPlaying(true);
     }
@@ -27,7 +26,6 @@ export default function BackgroundMusic() {
     <>
       <audio ref={audioRef} src="/bg-music.mp3" loop />
       
-      {/* Button to start music */}
       {!playing && (
         <button
           onClick={handlePlay}
@@ -48,7 +46,6 @@ export default function BackgroundMusic() {
         </button>
       )}
 
-      {/* Volume slider */}
       {playing && (
         <input
           type="range"
