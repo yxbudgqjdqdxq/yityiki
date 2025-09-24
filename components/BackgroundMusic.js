@@ -1,20 +1,24 @@
-"use client"; // Needed if using Next.js 13 app directory
-import { useRef, useState } from "react";
+"use client";
+import { useRef, useState, useEffect } from "react";
 
 export default function BackgroundMusic() {
   const audioRef = useRef(null);
   const [volume, setVolume] = useState(0.5);
   const [playing, setPlaying] = useState(false);
 
-  const handlePlay = () => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-      audioRef.current.play().catch(() => {
-        console.log("Autoplay blocked. Click the button to start music.");
-      });
-      setPlaying(true);
-    }
-  };
+  // Fallback: start music when user clicks anywhere
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      if (!playing && audioRef.current) {
+        audioRef.current.volume = volume;
+        audioRef.current.play().catch(() => {});
+        setPlaying(true);
+      }
+      window.removeEventListener("click", handleUserInteraction);
+    };
+    window.addEventListener("click", handleUserInteraction);
+    return () => window.removeEventListener("click", handleUserInteraction);
+  }, [playing, volume]);
 
   const handleVolumeChange = (e) => {
     const vol = parseFloat(e.target.value);
@@ -25,27 +29,8 @@ export default function BackgroundMusic() {
   return (
     <>
       <audio ref={audioRef} src="/bg-music.mp3" loop />
-      
-      {!playing && (
-        <button
-          onClick={handlePlay}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            padding: "8px 12px",
-            borderRadius: "10px",
-            background: "#ffb6c1",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            zIndex: 1000,
-          }}
-        >
-          Play Music
-        </button>
-      )}
 
+      {/* Slider is always rendered above everything */}
       {playing && (
         <input
           type="range"
@@ -59,9 +44,36 @@ export default function BackgroundMusic() {
             bottom: "20px",
             right: "20px",
             width: "120px",
-            zIndex: 1000,
+            zIndex: 9999,
           }}
         />
+      )}
+
+      {/* Play button for first interaction */}
+      {!playing && (
+        <button
+          onClick={() => {
+            if (audioRef.current) {
+              audioRef.current.volume = volume;
+              audioRef.current.play().catch(() => {});
+              setPlaying(true);
+            }
+          }}
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            padding: "10px 14px",
+            borderRadius: "12px",
+            background: "#ffb6c1",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer",
+            zIndex: 9999,
+          }}
+        >
+          Play Music
+        </button>
       )}
     </>
   );
