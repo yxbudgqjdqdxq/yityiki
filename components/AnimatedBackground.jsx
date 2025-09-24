@@ -1,5 +1,3 @@
-
-// components/AnimatedBackground.js
 export default function AnimatedBackground() {
   return (
     <div className="animated-bg">
@@ -8,5 +6,5 @@ export default function AnimatedBackground() {
       <div className="blob blob3"></div>
       <div className="blob blob4"></div>
     </div>
-  );
+  )
 }
