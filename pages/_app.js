@@ -1,4 +1,3 @@
-
 import '@/styles/globals.css'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import BackgroundMusic from '@/components/BackgroundMusic'
