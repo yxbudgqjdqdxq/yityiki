@@ -161,3 +161,90 @@ body::before{
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+/* ===========================
+   SAFE: Global animated background (append only)
+   - Non-invasive: only CSS, no HTML or JS changes
+   - Uses body::before for the soft shifting gradient
+   - Uses body::after for 3 blurred pastel blobs that float slowly
+   - pointer-events: none so it never intercepts clicks
+   =========================== */
+
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* stay behind everything */
+  pointer-events: none;
+  background: linear-gradient(120deg,
+    rgba(255, 229, 240, 0.75) 0%,
+    rgba(246, 232, 255, 0.72) 25%,
+    rgba(235, 244, 255, 0.68) 55%,
+    rgba(255, 245, 240, 0.72) 100%);
+  background-size: 400% 400%;
+  filter: blur(28px) saturate(1.03);
+  opacity: 0.98;
+  animation: ___sh_ab_grad 32s ease-in-out infinite;
+  will-change: background-position, filter, opacity;
+  mix-blend-mode: normal;
+}
+
+/* 3 floating blurred blobs created with layered radial-gradients */
+body::after{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* three radial gradients (pink / purple / soft-peach).
+     We animate their positions using background-position in keyframes below. */
+  background-image:
+    radial-gradient(circle at 30% 30%, rgba(255,182,193,0.90) 0%, rgba(255,182,193,0.18) 40%, transparent 70%),
+    radial-gradient(circle at 60% 30%, rgba(214,179,255,0.86) 0%, rgba(214,179,255,0.16) 44%, transparent 72%),
+    radial-gradient(circle at 40% 70%, rgba(255,223,244,0.92) 0%, rgba(255,223,244,0.14) 44%, transparent 75%);
+  background-repeat: no-repeat;
+  background-position: 8% 8%, 92% 30%, 60% 84%; /* starting positions */
+  background-size: 520px 520px, 420px 420px, 360px 360px;
+  filter: blur(64px) saturate(1.02);
+  opacity: 0.66;
+  mix-blend-mode: screen;
+  animation: ___sh_ab_blobs 36s ease-in-out infinite;
+  will-change: background-position, transform, opacity;
+}
+
+/* gentle gradient shift */
+@keyframes ___sh_ab_grad{
+  0%   { background-position: 0% 50%; filter: blur(26px) saturate(1.02); }
+  33%  { background-position: 50% 30%; filter: blur(30px) saturate(1.04); }
+  66%  { background-position: 100% 60%; filter: blur(26px) saturate(1.06); }
+  100% { background-position: 0% 50%; filter: blur(26px) saturate(1.02); }
+}
+
+/* floating blob motion (we animate the combined background-position of the three radial-gradient layers) */
+@keyframes ___sh_ab_blobs{
+  0% {
+    background-position: 6% 10%, 94% 28%, 62% 86%;
+  }
+  25% {
+    background-position: 14% 2%, 82% 40%, 48% 70%;
+  }
+  50% {
+    background-position: 22% 18%, 88% 56%, 34% 62%;
+  }
+  75% {
+    background-position: 10% 26%, 96% 34%, 56% 78%;
+  }
+  100% {
+    background-position: 6% 10%, 94% 28%, 62% 86%;
+  }
+}
+
+/* SAFETY: ensure the background layer never covers or intercepts interactive UI. */
+.animated-bg-fallback, body::before, body::after {
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+/* If any top-level wrapper in your site uses z-index less than 0, bringing it above the background is required.
+   This helper ensures page content stays above; add to your main wrapper only if needed:
+   .site-root { position: relative; z-index: 1; }
+*/
